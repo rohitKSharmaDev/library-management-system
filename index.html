@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System</title>
+
+  <link
+    rel="stylesheet"
+    href="https://code.getmdl.io/1.3.0/material.indigo-pink.min.css"
+  >
+  <!-- Google Icon Font -->
+  <link
+    rel="stylesheet"
+    href="https://fonts.googleapis.com/icon?family=Material+Icons"
+  >
+
+  <link rel="stylesheet" href="./assets/css/main.css">
+</head>
+
+<body>
+  <div class="main-container">
+    <h2>Library Management System</h2>
+    
+    <div class="form-wrapper">
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="bookTitle" placeholder="Enter Book Title">
+        <label class="mdl-textfield__label" for="bookTitle">
+          Book Title
+        </label>
+      </div>
+
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="bookAuthor" placeholder="Enter Book Author">
+        <label class="mdl-textfield__label" for="bookAuthor">
+          Author
+        </label>
+      </div>
+
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="text" id="bookGenre" placeholder="Enter Book Genre">
+        <label class="mdl-textfield__label" for="bookGenre">
+          Genre
+        </label>
+      </div>
+
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="number" id="bookPublishYear" placeholder="Enter Publish Year">
+        <label class="mdl-textfield__label" for="bookPublishYear">
+          Year
+        </label>
+      </div>
+
+      <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+        <input class="mdl-textfield__input" type="number" id="bookQuantity" placeholder="Enter Quantity Year">
+        <label class="mdl-textfield__label" for="bookQuantity">
+          Year
+        </label>
+      </div>
+      
+      <div class="mdl-grid ctas-wrapper">
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored"
+          style="align-self: flex-start; margin-right: 20px;" id="addBookBtn" type="submit">
+          Add Book
+        </button>
+        <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent"
+          style="align-self: flex-start;" id="clearAllBtn" type="button">
+          Clear All
+        </button>
+      </div>
+    </div>
+  
+    <table class="mdl-data-table mdl-js-data-table" id="addedBooksTable">
+      <thead>
+        <tr>
+          <th class="mdl-data-table__cell--non-numeric">Title</th>
+          <th class="mdl-data-table__cell--non-numeric">Author</th>
+          <th class="mdl-data-table__cell--non-numeric">Genre</th>
+          <th>Year</th>
+          <th>Quantity</th>
+          <th class="mdl-data-table__cell--non-numeric">Actions</th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+  </div>
+
+  <button type="button" class="mdl-button show-modal">Show Modal</button>
+  
+  <dialog class="mdl-dialog" style="min-width: 500px;">
+    <div class="mdl-dialog__content">
+      <h4 class="title">Edit Book</h4>
+
+      <form action="#" id="editBook" style="width: 100%;">
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 100%;">
+          <input class="mdl-textfield__input" type="text" id="bookTitle" placeholder="Enter Book Title">
+          <label class="mdl-textfield__label" for="bookTitle">
+            Book Title
+          </label>
+        </div>
+        
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 100%;">
+          <input class="mdl-textfield__input" type="text" id="bookAuthor" placeholder="Enter Book Author">
+          <label class="mdl-textfield__label" for="bookAuthor">
+            Author
+          </label>
+        </div>
+        
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 100%;">
+          <input class="mdl-textfield__input" type="text" id="bookGenre" placeholder="Enter Book Genre">
+          <label class="mdl-textfield__label" for="bookGenre">
+            Genre
+          </label>
+        </div>
+        
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 100%;">
+          <input class="mdl-textfield__input" type="number" id="bookPublishYear" placeholder="Enter Publish Year">
+          <label class="mdl-textfield__label" for="bookPublishYear">
+            Year
+          </label>
+        </div>
+        
+        <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label" style="width: 100%;">
+          <input class="mdl-textfield__input" type="number" id="bookQuantity" placeholder="Enter Quantity Year">
+          <label class="mdl-textfield__label" for="bookQuantity">
+            Year
+          </label>
+        </div>
+        
+        <input type="hidden" id="editBookId">
+
+        <div class="mdl-grid ctas-wrapper">
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored"
+            style="margin-right: 20px;" id="editBookBtn" type="submit">
+            Save Changes
+          </button>
+          <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent close" id="discardChangesBtn" type="button" class="mdl-button close">
+            Discard
+          </button>
+        </div>
+      </form>
+    </div>
+
+  </dialog>
+
+  <script src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script src="./assets/js/app.js"></script>
+</body>
+</html>

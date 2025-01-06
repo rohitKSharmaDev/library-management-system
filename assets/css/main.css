@@ -1,0 +1,38 @@
+body {
+  font-family: 'Roboto', sans-serif;
+  padding: 16px;
+  /* background-color: #1d2630;
+  color: #fff; */
+}
+
+.main-container{
+  max-width: 768px;
+  text-align: center;
+  margin: 0 auto;
+}
+
+.form-wrapper{
+  display: flex;
+  flex-direction: column;
+  text-align: left;
+}
+
+.form-wrapper .mdl-textfield {
+  width: 100%;
+}
+
+.form-wrapper .mdl-textfield .mdl-textfield__label{
+  font-weight: bold;
+  /* color: #ccc; */
+}
+
+.form-wrapper .ctas-wrapper{
+  margin: unset;
+  padding-left: unset;
+  padding-right: unset;
+}
+
+#addedBooksTable{
+  width: 100%;
+  margin: 20px 0;
+}

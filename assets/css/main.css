@@ -30,6 +30,7 @@ body {
   margin: unset;
   padding-left: unset;
   padding-right: unset;
+  text-align: left;
 }
 
 .table-wrapper{

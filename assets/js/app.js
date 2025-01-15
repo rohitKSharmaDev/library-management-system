@@ -1,5 +1,8 @@
 const bookForm = document.getElementById('bookForm');
 
+const tableWrapper = document.getElementsByClassName('table-wrapper');
+tableWrapper[0].style.display = 'none';
+
 let allFormFields = (usedFor = 'default') => {
   return `
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -7,6 +10,7 @@ let allFormFields = (usedFor = 'default') => {
       <label class="mdl-textfield__label" for="${usedFor != 'default' ? 'editB' : 'b'}ookTitle">
         Book Title
       </label>
+       <span class="mdl-textfield__error" id="titleError"></span>
     </div>
 
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -14,6 +18,7 @@ let allFormFields = (usedFor = 'default') => {
       <label class="mdl-textfield__label" for="${usedFor != 'default' ? 'editB' : 'b'}ookAuthor">
         Author
       </label>
+      <span class="mdl-textfield__error" id="authorError"></span>
     </div>
 
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -21,6 +26,7 @@ let allFormFields = (usedFor = 'default') => {
       <label class="mdl-textfield__label" for="${usedFor != 'default' ? 'editB' : 'b'}ookGenre">
         Genre
       </label>
+      <span class="mdl-textfield__error" id="genreError"></span>
     </div>
 
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -28,6 +34,7 @@ let allFormFields = (usedFor = 'default') => {
       <label class="mdl-textfield__label" for="${usedFor != 'default' ? 'editB' : 'b'}ookPublishYear">
         Year
       </label>
+      <span class="mdl-textfield__error" id="yearError"></span>
     </div>
 
     <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
@@ -35,6 +42,7 @@ let allFormFields = (usedFor = 'default') => {
       <label class="mdl-textfield__label" for="${usedFor != 'default' ? 'editB' : 'b'}ookQuantity">
         Quantity
       </label>
+      <span class="mdl-textfield__error" id="quantityError"></span>
     </div>
     <div class="mdl-grid ctas-wrapper" style="${usedFor != 'default' ? 'padding-left: 0;' : ''}">
       <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored"
@@ -53,15 +61,24 @@ bookForm.insertAdjacentHTML('beforeend', allFormFields('default'));
 
 let books = [];
 
-let bookTitle = document.getElementById('bookTitle');
-let bookAuthor = document.getElementById('bookAuthor');
-let bookGenre = document.getElementById('bookGenre');
-let bookPublishYear = document.getElementById('bookPublishYear');
-let bookQuantity = document.getElementById('bookQuantity');
+const bookTitle = document.getElementById('bookTitle');
+const titleError = document.getElementById("titleError");
+
+const bookAuthor = document.getElementById('bookAuthor');
+const authorError = document.getElementById("authorError");
+
+const bookGenre = document.getElementById('bookGenre');
+const genreError = document.getElementById("genreError");
+
+const bookPublishYear = document.getElementById('bookPublishYear');
+const yearError = document.getElementById("yearError");
+
+const bookQuantity = document.getElementById('bookQuantity');
+const quantityError = document.getElementById("quantityError");
 
 const editBookForm = document.getElementById('editBookForm');
 
-let dialog = document.querySelector('dialog');
+const dialog = document.querySelector('dialog');
 
 const clearAllBtn = document.getElementById('clearAllBtn');
 
@@ -117,6 +134,8 @@ function generateId() {
 }
 
 function addBook(book) {
+  tableWrapper[0].style.display = 'block';
+
   let table = document.querySelector('#addedBooksTable tbody');
   table.insertAdjacentHTML('beforeend', `
     <tr id="${book.id}">
@@ -138,24 +157,123 @@ function addBook(book) {
   `);
 }
 
+function validateField(inputField, validationFn, errorMessage) {
+  const errorElement = inputField.nextElementSibling.nextElementSibling;
+
+  if (validationFn(inputField.value)) {
+    errorElement.textContent = '';
+    return true;
+
+  } else {
+    errorElement.textContent = errorMessage;
+    return false;
+  }
+}
+
+function addDynamicValidation(inputField, validationFn, errorMessage) {
+  inputField.addEventListener('input', () => {
+    validateField(inputField, validationFn, errorMessage);
+  });
+}
+
+const validateBookTitle = (value) => value.length >= 3 && value.length <= 100;
+
+const validateBookAuthor = (value) => value.length >= 3 && value.length <= 100;
+
+const validateBookGenre = (value) => value.length >= 3 && value.length <= 100;
+
+const validateBookPublishYear = (value) =>
+  value.length === 4 &&
+  !isNaN(value) &&
+  parseInt(value) >= 1000 &&
+  parseInt(value) <= new Date().getFullYear();
+
+const validateBookQuantity = (value) =>
+  !isNaN(value) && parseInt(value) > 0 && parseInt(value) <= 99;
+
+function validateForm() {
+  const isTitleValid = validateField(
+    bookTitle,
+    validateBookTitle,
+    'Book Title must be between 3 and 100 characters.'
+  );
+
+  const isAuthorValid = validateField(
+    bookAuthor,
+    validateBookAuthor,
+    'Author must be between 3 and 100 characters.'
+  );
+
+  const isGenreValid = validateField(
+    bookGenre,
+    validateBookGenre,
+    'Genre must be between 3 and 100 characters.'
+  );
+
+  const isYearValid = validateField(
+    bookPublishYear,
+    validateBookPublishYear,
+    'Publish Year must be a 4-digit number.'
+  );
+
+  const isQuantityValid = validateField(
+    bookQuantity,
+    validateBookQuantity,
+    'Quantity must be a number between 1 and 99.'
+  );
+
+  return isTitleValid && isAuthorValid && isGenreValid && isYearValid && isQuantityValid;
+}
+
+addDynamicValidation(
+  bookTitle,
+  validateBookTitle,
+  'Book Title must be between 3 and 100 characters.'
+);
+
+addDynamicValidation(
+  bookAuthor,
+  validateBookAuthor,
+  'Author must be between 3 and 100 characters.'
+);
+
+addDynamicValidation(
+  bookGenre,
+  validateBookGenre,
+  'Genre must be between 3 and 100 characters.'
+);
+
+addDynamicValidation(
+  bookPublishYear,
+  validateBookPublishYear,
+  'Publish Year must be a 4-digit number.'
+);
+
+addDynamicValidation(
+  bookQuantity,
+  validateBookQuantity,
+  'Quantity must be a number between 1 and 99.'
+);
+
 bookForm.addEventListener('submit', function (event) {
   event.preventDefault();
 
-  let book = {
-    id: generateId(),
-    title: bookTitle.value,
-    author: bookAuthor.value,
-    genre: bookGenre.value,
-    year: bookPublishYear.value,
-    quantity: bookQuantity.value
-  };
+  if (validateForm()) {
+    const book = {
+      id: generateId(),
+      title: bookTitle.value,
+      author: bookAuthor.value,
+      genre: bookGenre.value,
+      year: bookPublishYear.value,
+      quantity: bookQuantity.value
+    };
 
-  books.push(book);
-  addBook(book);
-  saveToIndexedDB(book);
-  clearForm();
+    books.push(book);
+    addBook(book);
+    saveToIndexedDB(book);
+    clearForm();
+  }
 });
-
 
 clearAllBtn.addEventListener('click', function () {
   clearForm();
@@ -196,6 +314,10 @@ function deleteBook(bookId) {
   if (row){
     row.remove()
   };
+
+  if(books.length == 0) {
+    tableWrapper[0].style.display = 'none';
+  }
 }
 
 editBookForm.insertAdjacentHTML('beforeend', allFormFields('edit'));

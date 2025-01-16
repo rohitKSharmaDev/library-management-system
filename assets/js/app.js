@@ -46,8 +46,8 @@ let allFormFields = (usedFor = 'default') => {
     </div>
     <div class="mdl-grid ctas-wrapper" style="${usedFor != 'default' ? 'padding-left: 0;' : ''}">
       <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--colored"
-        style="${usedFor == 'default' ? 'align-self: flex-start; margin-right: 20px;' : ''}" id="${usedFor == 'default' ? 'addBookBtn' : 'saveEditBookBtn'}" type="submit">
-        Add Book
+        style="${usedFor == 'default' ? 'align-self: flex-start; margin-right: 20px;' : ''}" id="${usedFor == 'default' ? 'addBookBtn' : 'editBookBtn'}" type="submit">
+        ${usedFor != 'default' ? 'Update' : 'Add'} Book
       </button>
       <button class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent ${usedFor != 'default' ? 'close-edit-dialog' : ''}"
         style="${usedFor == 'default' ? 'align-self: flex-start;' : 'margin-left: 20px'}" id="${usedFor == 'default' ? 'clearAllBtn' : 'editClearAllBtn'}" type="button">
@@ -98,7 +98,7 @@ function loadBooks() {
     const getAllRequest = store.getAll();
     getAllRequest.onsuccess = function () {
       books = getAllRequest.result;
-      books.forEach(book => addBook(book));
+      books.forEach(book => addEditBook(book));
       // notifyBooksUpdated();
     };
 
@@ -133,7 +133,19 @@ function generateId() {
   return Math.floor(Math.random() * 100000);
 }
 
-function addBook(book) {
+function addEditBook(book, isEditing=false) {
+  if (isEditing){
+    const editableRow = document.getElementById(`${book.id}`);
+
+    editableRow.children[0].textContent = book.title;
+    editableRow.children[1].textContent = book.author;
+    editableRow.children[2].textContent = book.genre;
+    editableRow.children[3].textContent = book.year;
+    editableRow.children[4].textContent = book.quantity;
+
+    return;
+  }
+
   tableWrapper[0].style.display = 'block';
 
   let table = document.querySelector('#addedBooksTable tbody');
@@ -269,7 +281,7 @@ bookForm.addEventListener('submit', function (event) {
     };
 
     books.push(book);
-    addBook(book);
+    addEditBook(book);
     saveToIndexedDB(book);
     clearForm();
   }
@@ -363,11 +375,10 @@ document.addEventListener('click', function (event) {
 });
 
 document.addEventListener('click', function (event) {
-  if (event.target.closest('.close-edit-dialog')) {
+  if (event.target.closest('.close-edit-dialog') || event.target.closest('#editBookBtn')) {
     dialog.close();
   }
 });
-
 
 editBookForm.addEventListener('submit', function (event) {
   event.preventDefault();
@@ -375,29 +386,39 @@ editBookForm.addEventListener('submit', function (event) {
   const editingId = editBookForm.getAttribute('data-editing-id');
   const book = {
     id: editingId ? parseInt(editingId) : generateId(),
-    title: bookTitle.value,
-    author: bookAuthor.value,
-    genre: bookGenre.value,
-    year: bookPublishYear.value,
-    quantity: bookQuantity.value,
+    title: editBookTitle.value,
+    author: editBookAuthor.value,
+    genre: editBookGenre.value,
+    year: editBookPublishYear.value,
+    quantity: editBookQuantity.value,
   };
 
   if (editingId) {
     const bookIndex = books.findIndex(b => b.id === parseInt(editingId));
     books[bookIndex] = book;
 
-    updateBookInIndexedDB(book);
     editBookForm.removeAttribute('data-editing-id');
-    
-  } else {
-    // Add new book
-    books.push(book);
-    saveToIndexedDB(book); // Save to IndexedDB
-  }
+    updateBookInIndexedDB(book);
+    addEditBook(book, true);
+    clearEditForm();
+  } 
+  
+  // else {
+  //   books.push(book);
+  //   saveToIndexedDB(book); // Save to IndexedDB
+  // }
 
-  addBook(book); // Update or add row in table
-  clearForm();
+  // addBook(book); // Update or add row in table
+  // clearForm();
 });
+
+function clearEditForm() {
+  editBookTitle.value = '';
+  editBookAuthor.value = '';
+  editBookGenre.value = '';
+  editBookPublishYear.value = '';
+  editBookQuantity.value = '';
+}
 
 function updateBookInIndexedDB(book) {
   const request = indexedDB.open('BookDatabase', 1);
